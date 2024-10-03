@@ -18,6 +18,7 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.javamoney:moneta:1.4.4")
 
 	// Test dependencies
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
