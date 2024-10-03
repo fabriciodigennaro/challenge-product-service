@@ -31,6 +31,7 @@ dependencies {
 	testCompileOnly("org.projectlombok:lombok:1.18.34")
 	testAnnotationProcessor("org.projectlombok:lombok:1.18.34")
 	testImplementation("org.assertj:assertj-core:3.26.3")
+	testImplementation("com.tngtech.archunit:archunit:1.3.0")
 }
 
 tasks.withType<Test> {
