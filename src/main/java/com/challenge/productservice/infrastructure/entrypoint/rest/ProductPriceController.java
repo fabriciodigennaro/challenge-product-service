@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/prices")
@@ -81,12 +81,14 @@ public class ProductPriceController {
     public ResponseEntity<Object> getProductPrice(
             @Parameter(example = "35455") @RequestParam long productId,
             @Parameter(example = "1") @RequestParam long brandId,
-            @Parameter(example = "2020-06-14T15:50:00Z") @RequestParam @NotNull Instant validAt
+            @Parameter(example = "2020-06-14T15:50:00Z") @RequestParam String validAt
     ) {
+        Instant validAtDate = safelyConvertToInstant(validAt)
+                .orElseThrow(() -> new RequestParamWithInvalidFormatException("validAt"));
         GetProductPriceRequest request = new GetProductPriceRequest(
                 new ProductId(productId),
                 new BrandId(brandId),
-                validAt
+                validAtDate
         );
         GetProductPriceResponse productPrice = getProductPriceUseCase.execute(request);
 
@@ -107,6 +109,14 @@ public class ProductPriceController {
                 yield ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
             }
         };
+    }
+
+    private Optional<Instant> safelyConvertToInstant(String instantString) {
+        try {
+            return Optional.of(Instant.parse(instantString));
+        } catch (RuntimeException exception) {
+            return Optional.empty();
+        }
     }
 
 }
