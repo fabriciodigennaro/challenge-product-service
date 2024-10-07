@@ -1,11 +1,13 @@
 package com.challenge.productservice.application.getproductprice;
 
+import com.challenge.productservice.application.getproductprice.GetProductPriceResponse.ProductPriceNotFound;
+import com.challenge.productservice.application.getproductprice.GetProductPriceResponse.Successful;
 import com.challenge.productservice.domain.productprice.ProductPrice;
 import com.challenge.productservice.domain.productprice.ProductPriceRepository;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
-
-import static com.challenge.productservice.application.getproductprice.GetProductPriceResponse.*;
 
 public class GetProductPriceUseCase {
 
@@ -16,11 +18,14 @@ public class GetProductPriceUseCase {
     }
 
     public GetProductPriceResponse execute(GetProductPriceRequest request) {
-        Optional<ProductPrice> productPrice = productPriceRepository.findHighestPriorityPrice(
+        List<ProductPrice> productPrices = productPriceRepository.getProductPrices(
                 request.productId(),
                 request.brandId(),
                 request.validAt()
         );
+
+        Optional<ProductPrice> productPrice = productPrices.stream()
+                .max(Comparator.comparingInt(ProductPrice::priority));
 
         return productPrice.isPresent() ? new Successful(productPrice.get()) : new ProductPriceNotFound();
     }

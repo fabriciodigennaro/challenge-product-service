@@ -19,7 +19,7 @@ import javax.money.Monetary;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -40,24 +40,32 @@ class JdbcProductPriceRepositoryIntegrationTest {
     LocalDateTime validAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
 
     @Test
-    void shouldGetProductPriceValidAtGivenDate() {
+    void shouldGetProductPricesValidAtGivenDate() {
         // Given
         ProductId productId = new ProductId(randomLong());
         BrandId brandId = new BrandId(randomLong());
-        ProductPrice productPrice = createProductPrice(
+        ProductPrice ProductPricePriorityZero = createProductPrice(
                 brandId,
                 productId,
                 validAt.minusDays(1),
                 validAt.plusDays(1),
                 0
         );
-        givenExistingProductPrice(productPrice);
+        ProductPrice ProductPricePriorityOne = createProductPrice(
+                brandId,
+                productId,
+                validAt.minusDays(1),
+                validAt.plusDays(1),
+                1
+        );
+        givenExistingProductPrice(ProductPricePriorityZero);
+        givenExistingProductPrice(ProductPricePriorityOne);
 
         // When
-        Optional<ProductPrice> result = productPriceRepository.findHighestPriorityPrice(productId, brandId, validAt);
+        List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result).isEqualTo(Optional.of(productPrice));
+        assertThat(result).isEqualTo(List.of(ProductPricePriorityZero, ProductPricePriorityOne));
     }
 
     @Test
@@ -75,10 +83,10 @@ class JdbcProductPriceRepositoryIntegrationTest {
         givenExistingProductPrice(productPrice);
 
         // When
-        Optional<ProductPrice> result = productPriceRepository.findHighestPriorityPrice(productId, brandId, validAt);
+        List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result).isEqualTo(Optional.of(productPrice));
+        assertThat(result).isEqualTo(List.of(productPrice));
     }
 
     @Test
@@ -96,39 +104,10 @@ class JdbcProductPriceRepositoryIntegrationTest {
         givenExistingProductPrice(productPrice);
 
         // When
-        Optional<ProductPrice> result = productPriceRepository.findHighestPriorityPrice(productId, brandId, validAt);
+        List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result).isEqualTo(Optional.of(productPrice));
-    }
-
-    @Test
-    void shouldGetProductPriceWithHighestPriority() {
-        // Given
-        ProductId productId = new ProductId(randomLong());
-        BrandId brandId = new BrandId(randomLong());
-        ProductPrice overridenProductPrice = createProductPrice(
-                brandId,
-                productId,
-                validAt.minusDays(1),
-                validAt.plusDays(1),
-                0
-        );
-        givenExistingProductPrice(overridenProductPrice);
-        ProductPrice expectedProductPrice = createProductPrice(
-                brandId,
-                productId,
-                validAt.minusDays(1),
-                validAt.plusDays(1),
-                1
-        );
-        givenExistingProductPrice(expectedProductPrice);
-
-        // When
-        Optional<ProductPrice> result = productPriceRepository.findHighestPriorityPrice(productId, brandId, validAt);
-
-        // Then
-        assertThat(result).isEqualTo(Optional.of(expectedProductPrice));
+        assertThat(result).isEqualTo(List.of(productPrice));
     }
 
     @Test
@@ -146,10 +125,10 @@ class JdbcProductPriceRepositoryIntegrationTest {
         givenExistingProductPrice(productPrice);
 
         // When
-        Optional<ProductPrice> result = productPriceRepository.findHighestPriorityPrice(productId, brandId, validAt);
+        List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result).isEmpty();
+        assertThat(result.size()).isEqualTo(0);
     }
 
     @Test
@@ -167,10 +146,10 @@ class JdbcProductPriceRepositoryIntegrationTest {
         givenExistingProductPrice(productPrice);
 
         // When
-        Optional<ProductPrice> result = productPriceRepository.findHighestPriorityPrice(productId, brandId, validAt);
+        List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result).isEmpty();
+        assertThat(result.size()).isEqualTo(0);
     }
 
     @Test
@@ -180,10 +159,10 @@ class JdbcProductPriceRepositoryIntegrationTest {
         BrandId brandId = new BrandId(randomLong());
 
         // When
-        Optional<ProductPrice> result = productPriceRepository.findHighestPriorityPrice(productId, brandId, validAt);
+        List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result).isEmpty();
+        assertThat(result.size()).isEqualTo(0);
     }
 
     @Test
@@ -203,10 +182,10 @@ class JdbcProductPriceRepositoryIntegrationTest {
         BrandId anotherBrandId = new BrandId(randomLong());
 
         // When
-        Optional<ProductPrice> result = productPriceRepository.findHighestPriorityPrice(productId, anotherBrandId, validAt);
+        List<ProductPrice> result = productPriceRepository.getProductPrices(productId, anotherBrandId, validAt);
 
         // Then
-        assertThat(result).isEmpty();
+        assertThat(result.size()).isEqualTo(0);
     }
 
     @Test
@@ -226,10 +205,10 @@ class JdbcProductPriceRepositoryIntegrationTest {
         ProductId anotherProductId = new ProductId(randomLong());
 
         // When
-        Optional<ProductPrice> result = productPriceRepository.findHighestPriorityPrice(anotherProductId, brandId, validAt);
+        List<ProductPrice> result = productPriceRepository.getProductPrices(anotherProductId, brandId, validAt);
 
         // Then
-        assertThat(result).isEmpty();
+        assertThat(result.size()).isEqualTo(0);
     }
 
     private void givenExistingProductPrice(ProductPrice productPrice) {

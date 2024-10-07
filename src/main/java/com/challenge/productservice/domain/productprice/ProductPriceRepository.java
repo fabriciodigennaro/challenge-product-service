@@ -1,8 +1,8 @@
 package com.challenge.productservice.domain.productprice;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 public interface ProductPriceRepository {
-    Optional<ProductPrice> findHighestPriorityPrice(ProductId productId, BrandId brandId, LocalDateTime validAt);
+    List<ProductPrice> getProductPrices(ProductId productId, BrandId brandId, LocalDateTime validAt);
 }

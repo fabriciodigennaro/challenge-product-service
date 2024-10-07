@@ -12,7 +12,7 @@ import javax.money.Monetary;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 public class JdbcProductPriceRepository implements ProductPriceRepository {
 
@@ -23,7 +23,7 @@ public class JdbcProductPriceRepository implements ProductPriceRepository {
     }
 
     @Override
-    public Optional<ProductPrice> findHighestPriorityPrice(ProductId productId, BrandId brandId, LocalDateTime validAt) {
+    public List<ProductPrice> getProductPrices(ProductId productId, BrandId brandId, LocalDateTime validAt) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("productId", productId.value())
                 .addValue("brandId", brandId.value())
@@ -36,11 +36,10 @@ public class JdbcProductPriceRepository implements ProductPriceRepository {
                     AND brand_id = :brandId
                     AND start_date <= :validAt
                     AND end_date >= :validAt
-                    ORDER BY priority DESC
                 """,
                 params,
                 new ProductPriceRowMapper()
-        ).stream().findFirst();
+        );
     }
 
     private static class ProductPriceRowMapper implements RowMapper<ProductPrice> {
