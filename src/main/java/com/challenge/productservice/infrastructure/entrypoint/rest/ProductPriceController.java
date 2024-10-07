@@ -24,8 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Instant;
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/prices")
@@ -81,14 +80,13 @@ public class ProductPriceController {
     public ResponseEntity<Object> getProductPrice(
             @Parameter(example = "35455") @RequestParam long productId,
             @Parameter(example = "1") @RequestParam long brandId,
-            @Parameter(example = "2020-06-14T15:50:00Z") @RequestParam String validAt
+            @Parameter(example = "2020-06-14T15:50:00") @RequestParam LocalDateTime validAt
     ) {
-        Instant validAtDate = safelyConvertToInstant(validAt)
-                .orElseThrow(() -> new RequestParamWithInvalidFormatException("validAt"));
+
         GetProductPriceRequest request = new GetProductPriceRequest(
                 new ProductId(productId),
                 new BrandId(brandId),
-                validAtDate
+                validAt
         );
         GetProductPriceResponse productPrice = getProductPriceUseCase.execute(request);
 
@@ -110,13 +108,4 @@ public class ProductPriceController {
             }
         };
     }
-
-    private Optional<Instant> safelyConvertToInstant(String instantString) {
-        try {
-            return Optional.of(Instant.parse(instantString));
-        } catch (RuntimeException exception) {
-            return Optional.empty();
-        }
-    }
-
 }

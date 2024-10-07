@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.money.Monetary;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -37,7 +37,7 @@ class JdbcProductPriceRepositoryIntegrationTest {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    Instant validAt = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    LocalDateTime validAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
 
     @Test
     void shouldGetProductPriceValidAtGivenDate() {
@@ -47,8 +47,8 @@ class JdbcProductPriceRepositoryIntegrationTest {
         ProductPrice productPrice = createProductPrice(
                 brandId,
                 productId,
-                validAt.minus(1, ChronoUnit.DAYS),
-                validAt.plus(1, ChronoUnit.DAYS),
+                validAt.minusDays(1),
+                validAt.plusDays(1),
                 0
         );
         givenExistingProductPrice(productPrice);
@@ -69,7 +69,7 @@ class JdbcProductPriceRepositoryIntegrationTest {
                 brandId,
                 productId,
                 validAt,
-                validAt.plus(1, ChronoUnit.DAYS),
+                validAt.plusDays(1),
                 0
         );
         givenExistingProductPrice(productPrice);
@@ -89,7 +89,7 @@ class JdbcProductPriceRepositoryIntegrationTest {
         ProductPrice productPrice = createProductPrice(
                 brandId,
                 productId,
-                validAt.minus(1, ChronoUnit.DAYS),
+                validAt.minusDays(1),
                 validAt,
                 0
         );
@@ -110,16 +110,16 @@ class JdbcProductPriceRepositoryIntegrationTest {
         ProductPrice overridenProductPrice = createProductPrice(
                 brandId,
                 productId,
-                validAt.minus(1, ChronoUnit.DAYS),
-                validAt.plus(1, ChronoUnit.DAYS),
+                validAt.minusDays(1),
+                validAt.plusDays(1),
                 0
         );
         givenExistingProductPrice(overridenProductPrice);
         ProductPrice expectedProductPrice = createProductPrice(
                 brandId,
                 productId,
-                validAt.minus(1, ChronoUnit.DAYS),
-                validAt.plus(1, ChronoUnit.DAYS),
+                validAt.minusDays(1),
+                validAt.plusDays(1),
                 1
         );
         givenExistingProductPrice(expectedProductPrice);
@@ -139,8 +139,8 @@ class JdbcProductPriceRepositoryIntegrationTest {
         ProductPrice productPrice = createProductPrice(
                 brandId,
                 productId,
-                validAt.minus(2, ChronoUnit.DAYS),
-                validAt.minus(1, ChronoUnit.DAYS),
+                validAt.minusDays(2),
+                validAt.minusDays(1),
                 0
         );
         givenExistingProductPrice(productPrice);
@@ -160,8 +160,8 @@ class JdbcProductPriceRepositoryIntegrationTest {
         ProductPrice productPrice = createProductPrice(
                 brandId,
                 productId,
-                validAt.plus(1, ChronoUnit.DAYS),
-                validAt.plus(2, ChronoUnit.DAYS),
+                validAt.plusDays(1),
+                validAt.plusDays(2),
                 0
         );
         givenExistingProductPrice(productPrice);
@@ -194,8 +194,8 @@ class JdbcProductPriceRepositoryIntegrationTest {
         ProductPrice productPrice = createProductPrice(
                 brandId,
                 productId,
-                validAt.minus(1, ChronoUnit.DAYS),
-                validAt.plus(1, ChronoUnit.DAYS),
+                validAt.minusDays(1),
+                validAt.plusDays(1),
                 0
         );
         givenExistingProductPrice(productPrice);
@@ -217,8 +217,8 @@ class JdbcProductPriceRepositoryIntegrationTest {
         ProductPrice productPrice = createProductPrice(
                 brandId,
                 productId,
-                validAt.minus(1, ChronoUnit.DAYS),
-                validAt.plus(1, ChronoUnit.DAYS),
+                validAt.minusDays(1),
+                validAt.plusDays(1),
                 0
         );
         givenExistingProductPrice(productPrice);
@@ -259,8 +259,8 @@ class JdbcProductPriceRepositoryIntegrationTest {
     private ProductPrice createProductPrice(
             BrandId brandId,
             ProductId productId,
-            Instant startDate,
-            Instant endDate,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
             int priority
     ) {
         return new ProductPrice(

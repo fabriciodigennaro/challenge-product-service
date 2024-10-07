@@ -20,14 +20,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-        RequestParamWithInvalidFormatException.class
-    })
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    Problem handle(RequestParamWithInvalidFormatException exception) {
-        return new Problem(exception.getMessage());
-    }
-
-    @ExceptionHandler({
         MissingServletRequestParameterException.class,
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)

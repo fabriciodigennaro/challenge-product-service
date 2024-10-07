@@ -28,8 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.money.Monetary;
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -50,9 +49,9 @@ class ProductPriceControllerContractTest {
 
     ProductId productId = new ProductId(2525);
     BrandId brandId = new BrandId(1);
-    Instant validAt = Instant.now();
-    Instant startDate = validAt.minus(1, ChronoUnit.DAYS);
-    Instant endDate = validAt.plus(1, ChronoUnit.DAYS);
+    LocalDateTime validAt = LocalDateTime.now();
+    LocalDateTime startDate = validAt.minusDays(1);
+    LocalDateTime endDate = validAt.plusDays(1);
     BigDecimal price = new BigDecimal("9.99");
     int priceList = 1;
     String currency = "EUR";
@@ -139,7 +138,7 @@ class ProductPriceControllerContractTest {
         // Then
         response.then()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
-                .body("detail", CoreMatchers.equalTo("Request param 'validAt' has an invalid format"));
+                .body("detail", CoreMatchers.equalTo("Parameter 'validAt' has an invalid type"));
 
         verifyNoInteractions(getProductPriceUseCase);
     }
@@ -153,7 +152,7 @@ class ProductPriceControllerContractTest {
         // Then
         response.then()
                 .statusCode(HttpStatus.BAD_REQUEST.value())
-                .body("detail", CoreMatchers.equalTo("Request param 'validAt' has an invalid format"));
+                .body("detail", CoreMatchers.equalTo("Parameter 'validAt' has an invalid type"));
 
         verifyNoInteractions(getProductPriceUseCase);
     }

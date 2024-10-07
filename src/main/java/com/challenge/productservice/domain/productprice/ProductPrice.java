@@ -2,12 +2,12 @@ package com.challenge.productservice.domain.productprice;
 
 import javax.money.CurrencyUnit;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record ProductPrice(
     BrandId brandId,
-    Instant startDate,
-    Instant endDate,
+    LocalDateTime startDate,
+    LocalDateTime endDate,
     int priceList,
     ProductId productId,
     int priority,

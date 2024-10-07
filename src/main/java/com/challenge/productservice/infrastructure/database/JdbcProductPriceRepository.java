@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import javax.money.Monetary;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public class JdbcProductPriceRepository implements ProductPriceRepository {
@@ -23,7 +23,7 @@ public class JdbcProductPriceRepository implements ProductPriceRepository {
     }
 
     @Override
-    public Optional<ProductPrice> findHighestPriorityPrice(ProductId productId, BrandId brandId, Instant validAt) {
+    public Optional<ProductPrice> findHighestPriorityPrice(ProductId productId, BrandId brandId, LocalDateTime validAt) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("productId", productId.value())
                 .addValue("brandId", brandId.value())
@@ -49,8 +49,8 @@ public class JdbcProductPriceRepository implements ProductPriceRepository {
         public ProductPrice mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new ProductPrice(
                     new BrandId(rs.getInt("brand_id")),
-                    rs.getTimestamp("start_date").toInstant(),
-                    rs.getTimestamp("end_date").toInstant(),
+                    rs.getTimestamp("start_date").toLocalDateTime(),
+                    rs.getTimestamp("end_date").toLocalDateTime(),
                     rs.getInt("price_list"),
                     new ProductId(rs.getInt("product_id")),
                     rs.getInt("priority"),

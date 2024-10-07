@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.money.Monetary;
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -25,9 +24,9 @@ class GetProductPriceUseCaseTest {
 
     ProductId productId = new ProductId(2525);
     BrandId brandId = new BrandId(1);
-    Instant validAt = Instant.now();
-    Instant startDate = validAt.minus(1, ChronoUnit.DAYS);
-    Instant endDate = validAt.plus(1, ChronoUnit.DAYS);
+    LocalDateTime validAt = LocalDateTime.now();
+    LocalDateTime startDate = validAt.minusDays(1);
+    LocalDateTime endDate = validAt.plusDays(1);
 
     ProductPrice expectedProductPrice = new ProductPrice(
             brandId,

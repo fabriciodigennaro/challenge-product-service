@@ -20,7 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.money.Monetary;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 
@@ -38,9 +38,9 @@ public class GetProductPriceComponentTest {
 
     ProductId productId = new ProductId(2525);
     BrandId brandId = new BrandId(1);
-    Instant validAt = Instant.now().truncatedTo(ChronoUnit.MILLIS);
-    Instant startDate = validAt.minus(1, ChronoUnit.DAYS);
-    Instant endDate = validAt.plus(1, ChronoUnit.DAYS);
+    LocalDateTime validAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
+    LocalDateTime startDate = validAt.minusDays(1);
+    LocalDateTime endDate = validAt.plusDays(1);
     BigDecimal price = new BigDecimal("9.99");
     int priceList = 1;
     String currency = "EUR";

@@ -3,7 +3,7 @@ package com.challenge.productservice.infrastructure.entrypoint.rest.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record ProductPriceResponse(
         @Schema(
@@ -28,13 +28,13 @@ public record ProductPriceResponse(
             description = "Price start date",
             example = "2024-10-04T11:14:29.070Z"
         )
-        Instant startDate,
+        LocalDateTime startDate,
 
         @Schema(
             description = "Price end date",
             example = "2024-12-04T11:14:29.070Z"
         )
-        Instant endDate,
+        LocalDateTime endDate,
 
         @Schema(
             description = "Price amount",
