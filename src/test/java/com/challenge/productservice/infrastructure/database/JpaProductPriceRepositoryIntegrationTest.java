@@ -5,37 +5,38 @@ import com.challenge.productservice.domain.productprice.ProductId;
 import com.challenge.productservice.domain.productprice.ProductPrice;
 import com.challenge.productservice.domain.productprice.ProductPriceRepository;
 import com.challenge.productservice.infrastructure.config.DatabaseConfig;
+import com.challenge.productservice.infrastructure.database.entity.ProductPriceEntity;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.money.Monetary;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@JdbcTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@DataJpaTest
 @Import({
         DatabaseConfig.class
 })
-class JdbcProductPriceRepositoryIntegrationTest {
+class JpaProductPriceRepositoryIntegrationTest {
 
     @Autowired
     private ProductPriceRepository productPriceRepository;
 
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     LocalDateTime validAt = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
 
@@ -44,28 +45,28 @@ class JdbcProductPriceRepositoryIntegrationTest {
         // Given
         ProductId productId = new ProductId(randomLong());
         BrandId brandId = new BrandId(randomLong());
-        ProductPrice ProductPricePriorityZero = createProductPrice(
+        ProductPrice productPricePriorityZero = createProductPrice(
                 brandId,
                 productId,
                 validAt.minusDays(1),
                 validAt.plusDays(1),
                 0
         );
-        ProductPrice ProductPricePriorityOne = createProductPrice(
+        ProductPrice productPricePriorityOne = createProductPrice(
                 brandId,
                 productId,
                 validAt.minusDays(1),
                 validAt.plusDays(1),
                 1
         );
-        givenExistingProductPrice(ProductPricePriorityZero);
-        givenExistingProductPrice(ProductPricePriorityOne);
+        givenExistingProductPrice(productPricePriorityZero);
+        givenExistingProductPrice(productPricePriorityOne);
 
         // When
         List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result).isEqualTo(List.of(ProductPricePriorityZero, ProductPricePriorityOne));
+        assertThat(result).isEqualTo(List.of(productPricePriorityZero, productPricePriorityOne));
     }
 
     @Test
@@ -86,7 +87,7 @@ class JdbcProductPriceRepositoryIntegrationTest {
         List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result).isEqualTo(List.of(productPrice));
+        AssertionsForClassTypes.assertThat(result).isEqualTo(List.of(productPrice));
     }
 
     @Test
@@ -107,7 +108,7 @@ class JdbcProductPriceRepositoryIntegrationTest {
         List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result).isEqualTo(List.of(productPrice));
+        AssertionsForClassTypes.assertThat(result).isEqualTo(List.of(productPrice));
     }
 
     @Test
@@ -128,7 +129,7 @@ class JdbcProductPriceRepositoryIntegrationTest {
         List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result.size()).isEqualTo(0);
+        AssertionsForClassTypes.assertThat(result.size()).isEqualTo(0);
     }
 
     @Test
@@ -149,7 +150,7 @@ class JdbcProductPriceRepositoryIntegrationTest {
         List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result.size()).isEqualTo(0);
+        AssertionsForClassTypes.assertThat(result.size()).isEqualTo(0);
     }
 
     @Test
@@ -162,7 +163,7 @@ class JdbcProductPriceRepositoryIntegrationTest {
         List<ProductPrice> result = productPriceRepository.getProductPrices(productId, brandId, validAt);
 
         // Then
-        assertThat(result.size()).isEqualTo(0);
+        AssertionsForClassTypes.assertThat(result.size()).isEqualTo(0);
     }
 
     @Test
@@ -185,7 +186,7 @@ class JdbcProductPriceRepositoryIntegrationTest {
         List<ProductPrice> result = productPriceRepository.getProductPrices(productId, anotherBrandId, validAt);
 
         // Then
-        assertThat(result.size()).isEqualTo(0);
+        AssertionsForClassTypes.assertThat(result.size()).isEqualTo(0);
     }
 
     @Test
@@ -208,27 +209,22 @@ class JdbcProductPriceRepositoryIntegrationTest {
         List<ProductPrice> result = productPriceRepository.getProductPrices(anotherProductId, brandId, validAt);
 
         // Then
-        assertThat(result.size()).isEqualTo(0);
+        AssertionsForClassTypes.assertThat(result.size()).isEqualTo(0);
     }
 
     private void givenExistingProductPrice(ProductPrice productPrice) {
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("brandId", productPrice.brandId().value())
-                .addValue("startDate", productPrice.startDate())
-                .addValue("endDate", productPrice.endDate())
-                .addValue("priceList", productPrice.priceList())
-                .addValue("productId", productPrice.productId().value())
-                .addValue("priority", productPrice.priority())
-                .addValue("price", productPrice.price())
-                .addValue("currency", productPrice.currency().getCurrencyCode());
+        ProductPriceEntity entity = new ProductPriceEntity();
+        entity.setId(UUID.randomUUID());
+        entity.setBrandId(productPrice.brandId().value());
+        entity.setStartDate(productPrice.startDate());
+        entity.setEndDate(productPrice.endDate());
+        entity.setPriceList(productPrice.priceList());
+        entity.setProductId(productPrice.productId().value());
+        entity.setPriority(productPrice.priority());
+        entity.setPrice(productPrice.price());
+        entity.setCurrency(productPrice.currency().getCurrencyCode());
 
-        namedParameterJdbcTemplate.update(
-                """
-                    INSERT INTO prices(brand_id, start_date, end_date, price_list, product_id, priority, price, currency)
-                    VALUES (:brandId, :startDate, :endDate, :priceList, :productId, :priority, :price, :currency)
-                """,
-                params
-        );
+        entityManager.persist(entity);
     }
 
     private long randomLong() {
@@ -253,5 +249,4 @@ class JdbcProductPriceRepositoryIntegrationTest {
                 Monetary.getCurrency("EUR")
         );
     }
-
 }

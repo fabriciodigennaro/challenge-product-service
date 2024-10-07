@@ -1,18 +1,19 @@
 package com.challenge.productservice.infrastructure.config;
 
 import com.challenge.productservice.domain.productprice.ProductPriceRepository;
-import com.challenge.productservice.infrastructure.database.JdbcProductPriceRepository;
+import com.challenge.productservice.infrastructure.database.JpaProductPriceRepository;
+import com.challenge.productservice.infrastructure.database.mapper.ProductPriceMapper;
+import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 @Configuration
 public class DatabaseConfig {
 
     @Bean
     public ProductPriceRepository productPriceRepository(
-            NamedParameterJdbcTemplate namedParameterJdbcTemplate
+            EntityManager entityManager
     ) {
-        return new JdbcProductPriceRepository(namedParameterJdbcTemplate);
+        return new JpaProductPriceRepository(entityManager, new ProductPriceMapper());
     }
 }

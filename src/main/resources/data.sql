@@ -1,4 +1,5 @@
 CREATE TABLE IF NOT EXISTS prices (
+    id          UUID          PRIMARY KEY,
     brand_id    BIGINT          NOT NULL,
     start_date  TIMESTAMP       NOT NULL,
     end_date    TIMESTAMP       NOT NULL,
@@ -9,8 +10,8 @@ CREATE TABLE IF NOT EXISTS prices (
     currency    VARCHAR(3)      NOT NULL
 );
 
-INSERT INTO prices (brand_id, start_date, end_date, price_list, product_id, priority, price, currency) VALUES
-(1, '2020-06-14 00:00:00', '2020-12-31 23:59:59', 1, 35455, 0, 35.5, 'EUR'),
-(1, '2020-06-14 15:00:00', '2020-06-14 18:30:00', 2, 35455, 1, 25.45, 'EUR'),
-(1, '2020-06-15 00:00:00', '2020-06-15 11:00:00', 3, 35455, 1, 30.5, 'EUR'),
-(1, '2020-06-15 16:00:00', '2020-12-31 23:59:59', 4, 35455, 1, 38.95, 'EUR');
+INSERT INTO prices (id, brand_id, start_date, end_date, price_list, product_id, priority, price, currency) VALUES
+('0ea91671-539e-4aea-b5e0-df8253e9d8e3', 1, '2020-06-14 00:00:00', '2020-12-31 23:59:59', 1, 35455, 0, 35.5, 'EUR'),
+('a8f9ee84-d6a9-41e8-beb0-0546f180d846', 1, '2020-06-14 15:00:00', '2020-06-14 18:30:00', 2, 35455, 1, 25.45, 'EUR'),
+('d04037d3-a067-4372-b90e-278f9f5bcda8', 1, '2020-06-15 00:00:00', '2020-06-15 11:00:00', 3, 35455, 1, 30.5, 'EUR'),
+('633042c6-eb76-4104-9692-3e9080f48f97', 1, '2020-06-15 16:00:00', '2020-12-31 23:59:59', 4, 35455, 1, 38.95, 'EUR');
