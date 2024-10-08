@@ -1,15 +1,3 @@
-CREATE TABLE IF NOT EXISTS prices (
-    id          UUID          PRIMARY KEY,
-    brand_id    BIGINT          NOT NULL,
-    start_date  TIMESTAMP       NOT NULL,
-    end_date    TIMESTAMP       NOT NULL,
-    price_list  INT             NOT NULL,
-    product_id  BIGINT          NOT NULL,
-    priority    INT             NOT NULL,
-    price       DECIMAL(10, 2)  NOT NULL,
-    currency    VARCHAR(3)      NOT NULL
-);
-
 INSERT INTO prices (id, brand_id, start_date, end_date, price_list, product_id, priority, price, currency) VALUES
 ('0ea91671-539e-4aea-b5e0-df8253e9d8e3', 1, '2020-06-14 00:00:00', '2020-12-31 23:59:59', 1, 35455, 0, 35.5, 'EUR'),
 ('a8f9ee84-d6a9-41e8-beb0-0546f180d846', 1, '2020-06-14 15:00:00', '2020-06-14 18:30:00', 2, 35455, 1, 25.45, 'EUR'),
