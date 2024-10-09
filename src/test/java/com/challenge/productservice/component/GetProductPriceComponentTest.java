@@ -54,7 +54,7 @@ public class GetProductPriceComponentTest {
                     1,
                     productId,
                     0,
-                    new BigDecimal("35.5"),
+                    new BigDecimal("35.50"),
                     currency
             ),
             new ProductPrice(
@@ -74,7 +74,7 @@ public class GetProductPriceComponentTest {
                     3,
                     productId,
                     1,
-                    new BigDecimal("30.5"),
+                    new BigDecimal("30.50"),
                     currency
             ),
             new ProductPrice(
